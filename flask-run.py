@@ -112,6 +112,29 @@ class PyAnalyticsRegister(Resource):
 api.add_resource(PyAnalyticsAdd, '/log')
 api.add_resource(PyAnalyticsRegister, '/register')
 
+@app.route('/logs/<string:key>')
+def logs(key):
+	key_db = Key.query.filter_by(key=key).first()
+	if key != None:
+		logs = Log.query.filter_by(key_id=key_db.id)
+		result = ""
+		for log in logs:
+			result += log.text+"<br>"
+		return result
+	else:
+		return "invalid key"
+
+@app.route('/keys/<string:email>')
+def keys(email):
+	keys = Key.query.filter_by(email=email)
+	if keys != None:
+		result = ""
+		for key in keys:
+			result += "<a href='/logs/"+key.key+"'>"+key.key + "</a> " + "<br>"
+		return result
+	else:
+		return "no keys for the email address"	
+
 if __name__ == '__main__':
     app.run(debug=True)
 
