@@ -19,9 +19,9 @@ class Key(db.Model):
 	appname = db.Column(db.String(20), unique=False)
 	created = db.Column(db.DateTime)
 
-	def __init__(self, key, nickname, email):
+	def __init__(self, key, appname, email):
 		self.key = key
-		self.nickname = nickname
+		self.appname = appname
 		self.email = email
 		self.created = datetime.datetime.utcnow()
 		
@@ -117,9 +117,11 @@ def logs(key):
 	key_db = Key.query.filter_by(key=key).first()
 	if key != None:
 		logs = Log.query.filter_by(key_id=key_db.id)
-		result = ""
+		result = key_db.key +  " - " + key_db.appname + " - " + key_db.email + "<br><br>"
+		count = 0
 		for log in logs:
-			result += log.text+"<br>"
+			count += 1
+			result += str(count) + " " + log.text+"<br>"
 		return result
 	else:
 		return "invalid key"
@@ -128,9 +130,9 @@ def logs(key):
 def keys(email):
 	keys = Key.query.filter_by(email=email)
 	if keys != None:
-		result = ""
+		result = email+"<br><br>"
 		for key in keys:
-			result += "<a href='/logs/"+key.key+"'>"+key.key + "</a> " + "<br>"
+			result += "<a href='/logs/"+key.key+"'>"+key.key + "</a> - " + key.appname + "<br>"
 		return result
 	else:
 		return "no keys for the email address"	
