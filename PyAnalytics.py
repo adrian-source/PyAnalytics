@@ -1,4 +1,4 @@
-import subprocess 
+import subprocess, os, socket
 
 server = "http://localhost:5000/"
 log = server+"log"
@@ -13,10 +13,9 @@ class PyAnalytics:
 		print "test_connection"
 
 	def log_use(self, string):
-		return subprocess.check_output(['curl', log, '-d', 'log_type=use&key='+self.key+'&text='+string, '-X', 'PUT'])
+		result = subprocess.Popen(['curl', log, '-s', '-d', 'log_type=use&hostname='+socket.gethostname()+'&key='+self.key+'&text='+string, '-X', 'PUT'], stdout=open(os.devnull, 'wb'))
 
 	def log_error(self, string):
-		print "log error"
+		result = subprocess.Popen(['curl', log, '-s', '-d', 'log_type=error&hostname='+socket.gethostname()+'&key='+self.key+'&text='+string, '-X', 'PUT'], stdout=open(os.devnull, 'wb'))
 
-analytics = PyAnalytics("141107214506facebook")
-print analytics.log_use("dbg .")
+
